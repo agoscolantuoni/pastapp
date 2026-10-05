@@ -24,6 +24,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { RecipeStepper } from "@/components/recipe-stepper"
 import { cn } from "@/lib/utils"
 import {
   pastas,
@@ -235,10 +236,8 @@ function ListScreen({
   const [selection, setSelection] = useState<string | undefined>(selectedId)
   return (
     <div className="flex flex-1 flex-col gap-6 px-5 pt-6">
+      <RecipeStepper first={kind} currentStep={1} />
       <div>
-        <p className="mb-1 text-xs font-medium tracking-widest text-muted-foreground uppercase">
-          Start with {kind}
-        </p>
         <h1 className="text-2xl font-semibold tracking-tight">
           Choose your {kind}
         </h1>
@@ -343,6 +342,7 @@ function PairingScreen({
       : pastas.filter((p) => p.sauceIds.includes(sauce!.id)).slice(0, 3)
   return (
     <div className="flex flex-1 flex-col gap-6 px-5 pt-6">
+      <RecipeStepper first={kind} currentStep={2} />
       <div className="flex items-start gap-3 sm:gap-5">
         <div className="flex w-[45%] max-w-[157px] shrink-0 justify-center overflow-hidden rounded-2xl bg-muted/30">
           <WireImage kind="selection" className="max-w-full" />
@@ -541,6 +541,11 @@ function RecipeScreen({
   }
   return (
     <div className="flex flex-1 flex-col">
+      {(from === "pasta" || from === "sauce") && (
+        <div className="px-5 pt-6 pb-2">
+          <RecipeStepper first={from} currentStep={3} />
+        </div>
+      )}
       <div className="flex items-center justify-between px-5 pt-4">
         <Button variant="ghost" onClick={back}>
           <ArrowLeft />
