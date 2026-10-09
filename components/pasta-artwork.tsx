@@ -5,15 +5,35 @@ import { motion, useReducedMotion } from "motion/react"
 
 // Each exported piece keeps its original angle; placement follows the card sketch.
 const compositions = {
+  penne: [
+    { file: "penne-1", left: "2%", top: "8%", width: "55%" },
+    { file: "penne-2", left: "4%", top: "51%", width: "50%" },
+    { file: "penne-3", left: "49%", top: "30%", width: "53%" },
+  ],
   fusilli: [
     { file: "fusilli-01", left: "4%", top: "43%", width: "42%" },
     { file: "fusilli-02", left: "17%", top: "3%", width: "57%" },
     { file: "fusilli-03", left: "47%", top: "28%", width: "50%" },
   ],
+  rigatoni: [
+    { file: "rigatoni-1", left: "49%", top: "54%", width: "49%" },
+    { file: "rigatoni-2", left: "43%", top: "0%", width: "53%" },
+    { file: "rigatoni-3", left: "-2%", top: "32%", width: "54%" },
+  ],
+  ravioli: [
+    { file: "ravioli-1", left: "15%", top: "3%", width: "48%" },
+    { file: "ravioli-2", left: "49%", top: "37%", width: "48%" },
+    { file: "ravioli-3", left: "1%", top: "51%", width: "47%" },
+  ],
   tortellini: [
     { file: "tortellini-01", left: "5%", top: "5%", width: "46%" },
     { file: "tortellini-02", left: "49%", top: "26%", width: "46%" },
     { file: "tortellini-03", left: "10%", top: "53%", width: "43%" },
+  ],
+  cappelletti: [
+    { file: "cappelletti-1", left: "5%", top: "5%", width: "46%" },
+    { file: "cappelletti-2", left: "49%", top: "26%", width: "46%" },
+    { file: "cappelletti-3", left: "10%", top: "53%", width: "43%" },
   ],
 } as const
 
