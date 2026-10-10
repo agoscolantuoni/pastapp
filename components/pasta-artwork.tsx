@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { motion, useReducedMotion } from "motion/react"
 
-// Each exported piece keeps its original angle; placement follows the card sketch.
+// Keep the original angles: short/filled pasta use clusters, long pasta one bundle.
 const compositions = {
   penne: [
     { file: "penne-1", left: "2%", top: "8%", width: "55%" },
@@ -20,6 +20,9 @@ const compositions = {
     { file: "rigatoni-2", left: "43%", top: "0%", width: "53%" },
     { file: "rigatoni-3", left: "-2%", top: "32%", width: "54%" },
   ],
+  spaghetti: [{ file: "spaghetti-1", left: "-3%", top: "25%", width: "106%" }],
+  linguine: [{ file: "linguine-1", left: "-3%", top: "24%", width: "106%" }],
+  bucatini: [{ file: "bucatini-1", left: "-3%", top: "22%", width: "106%" }],
   ravioli: [
     { file: "ravioli-1", left: "15%", top: "3%", width: "48%" },
     { file: "ravioli-2", left: "49%", top: "37%", width: "48%" },

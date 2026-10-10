@@ -356,6 +356,8 @@ function PairingScreen({
   const [selection, setSelection] = useState<string | undefined>(selectedMatch)
   const item = kind === "pasta" ? pasta : sauce
   if (!item) return <HomeScreen />
+  const showPastaArtwork =
+    kind === "pasta" && pasta && hasPastaArtwork(pasta.id)
   // Each sauce has at least three compatible pastas. Show three suggestions per wireframe.
   const matches =
     kind === "pasta"
@@ -365,9 +367,21 @@ function PairingScreen({
     <div className="flex flex-1 flex-col gap-6 px-5 pt-6">
       <RecipeStepper first={kind} currentStep={2} />
       <div className="flex items-start gap-3 sm:gap-5">
-        <div className="flex w-[45%] max-w-[157px] shrink-0 justify-center overflow-hidden rounded-2xl bg-muted/30">
-          <WireImage kind="selection" className="max-w-full" />
-        </div>
+        <motion.div
+          className={cn(
+            "relative flex aspect-square w-[45%] max-w-[157px] shrink-0 justify-center rounded-2xl bg-muted/30",
+            showPastaArtwork ? "overflow-visible" : "overflow-hidden"
+          )}
+          initial={false}
+          animate="rest"
+          whileHover={showPastaArtwork ? "buoyant" : undefined}
+        >
+          {kind === "pasta" && pasta && hasPastaArtwork(pasta.id) ? (
+            <PastaArtwork id={pasta.id} />
+          ) : (
+            <WireImage kind="selection" className="max-w-full" />
+          )}
+        </motion.div>
         <div className="min-w-0 space-y-2">
           <p className="text-xs text-muted-foreground">Your {kind}</p>
           <h1 className="text-xl font-semibold tracking-tight">{item.name}</h1>
