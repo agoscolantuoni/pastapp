@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react"
+import { motion } from "motion/react"
 import {
   ArrowLeft,
   ArrowRight,
@@ -25,6 +26,11 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { RecipeStepper } from "@/components/recipe-stepper"
+import {
+  hasPastaArtwork,
+  PastaArtwork,
+  PastaIngredientImage,
+} from "@/components/pasta-artwork"
 import { cn } from "@/lib/utils"
 import {
   pastas,
@@ -140,16 +146,24 @@ function PastaOption({
   pasta,
   selected,
   onClick,
+  previewArtwork = false,
 }: {
   pasta: Pasta
   selected: boolean
   onClick: () => void
+  previewArtwork?: boolean
 }) {
+  const showArtwork = previewArtwork && hasPastaArtwork(pasta.id)
   return (
-    <button
+    <motion.button
       type="button"
       aria-pressed={selected}
       onClick={onClick}
+      initial={false}
+      animate="rest"
+      whileHover={showArtwork ? "buoyant" : undefined}
+      whileFocus={showArtwork ? "buoyant" : undefined}
+      whileTap={showArtwork ? "pressed" : undefined}
       className={cn(
         "group relative rounded-2xl text-left transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring",
         selected && "bg-primary/15"
@@ -159,11 +173,21 @@ function PastaOption({
         size="sm"
         className={cn(
           "gap-2 rounded-2xl p-2 shadow-none ring-1 ring-border",
+          showArtwork && "overflow-visible",
           selected && "ring-2 ring-primary"
         )}
       >
-        <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-muted/40">
-          <WireImage kind="pasta" className="max-w-full" />
+        <div
+          className={cn(
+            "relative flex aspect-square items-center justify-center rounded-xl bg-muted/40",
+            showArtwork ? "overflow-visible" : "overflow-hidden"
+          )}
+        >
+          {previewArtwork && hasPastaArtwork(pasta.id) ? (
+            <PastaArtwork id={pasta.id} />
+          ) : (
+            <WireImage kind="pasta" className="max-w-full" />
+          )}
           {selected && (
             <span className="absolute top-1 right-1 flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
               <Check className="size-4" />
@@ -172,7 +196,7 @@ function PastaOption({
         </div>
         <span className="px-1 pb-1 text-sm font-medium">{pasta.name}</span>
       </Card>
-    </button>
+    </motion.button>
   )
 }
 function SauceOption({
@@ -277,6 +301,7 @@ function ListScreen({
                   .map((p) => (
                     <PastaOption
                       key={p.id}
+                      previewArtwork
                       pasta={p}
                       selected={selection === p.id}
                       onClick={() => setSelection(p.id)}
@@ -335,6 +360,8 @@ function PairingScreen({
   const [selection, setSelection] = useState<string | undefined>(selectedMatch)
   const item = kind === "pasta" ? pasta : sauce
   if (!item) return <HomeScreen />
+  const showPastaArtwork =
+    kind === "pasta" && pasta && hasPastaArtwork(pasta.id)
   // Each sauce has at least three compatible pastas. Show three suggestions per wireframe.
   const matches =
     kind === "pasta"
@@ -344,9 +371,21 @@ function PairingScreen({
     <div className="flex flex-1 flex-col gap-6 px-5 pt-6">
       <RecipeStepper first={kind} currentStep={2} />
       <div className="flex items-start gap-3 sm:gap-5">
-        <div className="flex w-[45%] max-w-[157px] shrink-0 justify-center overflow-hidden rounded-2xl bg-muted/30">
-          <WireImage kind="selection" className="max-w-full" />
-        </div>
+        <motion.div
+          className={cn(
+            "relative flex aspect-square w-[45%] max-w-[157px] shrink-0 justify-center rounded-2xl bg-muted/30",
+            showPastaArtwork ? "overflow-visible" : "overflow-hidden"
+          )}
+          initial={false}
+          animate="rest"
+          whileHover={showPastaArtwork ? "buoyant" : undefined}
+        >
+          {kind === "pasta" && pasta && hasPastaArtwork(pasta.id) ? (
+            <PastaArtwork id={pasta.id} />
+          ) : (
+            <WireImage kind="selection" className="max-w-full" />
+          )}
+        </motion.div>
         <div className="min-w-0 space-y-2">
           <p className="text-xs text-muted-foreground">Your {kind}</p>
           <h1 className="text-xl font-semibold tracking-tight">{item.name}</h1>
@@ -382,6 +421,7 @@ function PairingScreen({
           {(matches as Pasta[]).map((p) => (
             <PastaOption
               key={p.id}
+              previewArtwork
               pasta={p}
               selected={selection === p.id}
               onClick={() => setSelection(p.id)}
@@ -581,14 +621,18 @@ function RecipeScreen({
           </div>
           <p className="text-xs text-muted-foreground">For 2 people</p>
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-            {ingredients.map((i) => (
+            {ingredients.map((i, index) => (
               <Card
                 key={i.name}
                 size="sm"
                 className="rounded-2xl py-3 shadow-none ring-1 ring-border"
               >
                 <CardContent className="flex flex-col items-center gap-2 px-2 text-center">
-                  <WireImage kind="ingredient" />
+                  {index === 0 && hasPastaArtwork(pasta.id) ? (
+                    <PastaIngredientImage id={pasta.id} />
+                  ) : (
+                    <WireImage kind="ingredient" />
+                  )}
                   <span className="text-xs font-medium">{i.name}</span>
                   <span className="text-xs text-muted-foreground">
                     {i.quantity}

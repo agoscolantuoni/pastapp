@@ -70,11 +70,11 @@ export const pastas: Pasta[] = [
     sauceIds: ["pesto", "lemon-ricotta", "mushroom-cream"],
   },
   {
-    id: "tagliatelle",
-    name: "Tagliatelle",
+    id: "bucatini",
+    name: "Bucatini",
     category: "Long pasta",
     description:
-      "Wide ribbons are perfect for silky cream sauces and tender mushrooms.",
+      "Thick, hollow strands catch silky sauces inside and out for a hearty bite.",
     sauceIds: ["mushroom-cream", "tomato-basil", "lemon-ricotta"],
   },
   {
