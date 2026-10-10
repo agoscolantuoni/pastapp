@@ -26,7 +26,11 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { RecipeStepper } from "@/components/recipe-stepper"
-import { hasPastaArtwork, PastaArtwork } from "@/components/pasta-artwork"
+import {
+  hasPastaArtwork,
+  PastaArtwork,
+  PastaIngredientImage,
+} from "@/components/pasta-artwork"
 import { cn } from "@/lib/utils"
 import {
   pastas,
@@ -417,6 +421,7 @@ function PairingScreen({
           {(matches as Pasta[]).map((p) => (
             <PastaOption
               key={p.id}
+              previewArtwork
               pasta={p}
               selected={selection === p.id}
               onClick={() => setSelection(p.id)}
@@ -616,14 +621,18 @@ function RecipeScreen({
           </div>
           <p className="text-xs text-muted-foreground">For 2 people</p>
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-            {ingredients.map((i) => (
+            {ingredients.map((i, index) => (
               <Card
                 key={i.name}
                 size="sm"
                 className="rounded-2xl py-3 shadow-none ring-1 ring-border"
               >
                 <CardContent className="flex flex-col items-center gap-2 px-2 text-center">
-                  <WireImage kind="ingredient" />
+                  {index === 0 && hasPastaArtwork(pasta.id) ? (
+                    <PastaIngredientImage id={pasta.id} />
+                  ) : (
+                    <WireImage kind="ingredient" />
+                  )}
                   <span className="text-xs font-medium">{i.name}</span>
                   <span className="text-xs text-muted-foreground">
                     {i.quantity}

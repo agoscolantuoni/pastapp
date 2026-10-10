@@ -44,6 +44,26 @@ export function hasPastaArtwork(id: string): id is keyof typeof compositions {
   return id in compositions
 }
 
+export function PastaIngredientImage({
+  id,
+}: {
+  id: keyof typeof compositions
+}) {
+  // The first asset is piece 1, or the sole bundle for long pasta.
+  const piece = compositions[id][0]
+
+  return (
+    <Image
+      src={`/pasta/${piece.file}.svg`}
+      alt=""
+      width={53}
+      height={53}
+      unoptimized
+      className="size-[53px] object-contain"
+    />
+  )
+}
+
 export function PastaArtwork({ id }: { id: keyof typeof compositions }) {
   const reduceMotion = useReducedMotion()
 
