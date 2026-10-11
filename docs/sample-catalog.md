@@ -4,7 +4,7 @@ The catalog in [lib/catalog.ts](../lib/catalog.ts) supplies both selection flows
 
 Recipes serve two people: approximately 180–200 g dried pasta or 250 g fresh filled pasta. Cooking times include the supplied estimates; cold recipes show 20 minutes, and meat ragù takes about 2½ hours. Cook pasta to its package timing, coordinated with the sauce instructions.
 
-Meat and fish sauces are non-veggie. Veggie includes all cheeses, dairy and eggs. Plant-based sauces contain no animal ingredients: Tomato & basil, Tomato & shallot, Sun-dried tomato pesto, Lemon, basil & breadcrumbs, and Arrabbiata. Plant-based replaces the veggie badge when both apply. These dietary tags describe the sauce; the chosen pasta may contain eggs or dairy. Only veggie, plant-based, spicy and peppery badges are displayed when applicable. Peppery badges use the spicy icon. No vegetarian adaptations or style labels are included. New pasta shapes use the existing placeholder until illustrations are supplied.
+Meat and fish sauces are non-veggie. Veggie includes all cheeses, dairy and eggs. Plant-based sauces contain no animal ingredients: Tomato & basil, Tomato & shallot, Sun-dried tomato pesto, Lemon, basil & breadcrumbs, and Arrabbiata. Plant-based replaces the veggie badge when both apply. These dietary tags describe the sauce; the chosen pasta may contain eggs or dairy. Only veggie, plant-based, spicy and peppery badges are displayed when applicable. Peppery badges use the spicy icon. No vegetarian adaptations or style labels are included. All 14 pasta shapes have supplied SVG illustrations. Short and filled shapes use three-piece compositions with the shared animations; ingredient thumbnails use the first piece.
 
 ## Sauces and pairings
 
