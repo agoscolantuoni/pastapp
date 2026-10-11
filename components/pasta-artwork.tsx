@@ -20,6 +20,31 @@ const compositions = {
     { file: "rigatoni-2", left: "43%", top: "0%", width: "53%" },
     { file: "rigatoni-3", left: "-2%", top: "32%", width: "54%" },
   ],
+  cavatelli: [
+    { file: "cavatelli-1", left: "3%", top: "9%", width: "53%" },
+    { file: "cavatelli-2", left: "5%", top: "52%", width: "50%" },
+    { file: "cavatelli-3", left: "49%", top: "30%", width: "52%" },
+  ],
+  garganelli: [
+    { file: "garganelli-1", left: "0%", top: "8%", width: "56%" },
+    { file: "garganelli-2", left: "47%", top: "17%", width: "46%" },
+    { file: "garganelli-3", left: "3%", top: "57%", width: "55%" },
+  ],
+  orecchiette: [
+    { file: "orecchiette-1", left: "6%", top: "4%", width: "46%" },
+    { file: "orecchiette-2", left: "48%", top: "32%", width: "48%" },
+    { file: "orecchiette-3", left: "4%", top: "53%", width: "47%" },
+  ],
+  sedanini: [
+    { file: "sedanini-1", left: "2%", top: "7%", width: "54%" },
+    { file: "sedanini-3", left: "4%", top: "51%", width: "50%" },
+    { file: "sedanini-2", left: "49%", top: "29%", width: "52%" },
+  ],
+  trofie: [
+    { file: "trofie-1", left: "1%", top: "10%", width: "57%" },
+    { file: "trofie-2", left: "4%", top: "53%", width: "53%" },
+    { file: "trofie-3", left: "49%", top: "30%", width: "52%" },
+  ],
   spaghetti: [{ file: "spaghetti-1", left: "-3%", top: "25%", width: "106%" }],
   linguine: [{ file: "linguine-1", left: "-3%", top: "24%", width: "106%" }],
   bucatini: [{ file: "bucatini-1", left: "-3%", top: "22%", width: "106%" }],

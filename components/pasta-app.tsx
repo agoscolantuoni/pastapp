@@ -40,6 +40,7 @@ import {
   sauceCategories,
   recipeIngredients,
   recipeSteps,
+  sauceTime,
   type Pasta,
   type Sauce,
 } from "@/lib/catalog"
@@ -101,20 +102,33 @@ function WireImage({
 function SauceTags({ sauce }: { sauce: Sauce }) {
   return (
     <div className="flex flex-wrap gap-1.5">
+      <Badge variant="secondary">{sauce.category}</Badge>
       <Badge variant="secondary">
         <Clock3 />
-        {sauce.minutes} min
+        {sauceTime(sauce)}
       </Badge>
-      {sauce.vegetarian && (
+      {sauce.vegetarian && !sauce.plantBased && (
         <Badge variant="outline">
           <Leaf />
           Veggie
         </Badge>
       )}
+      {sauce.plantBased && (
+        <Badge variant="outline">
+          <Leaf />
+          Plant-based
+        </Badge>
+      )}
       {sauce.spicy && (
         <Badge variant="outline">
           <Flame />
-          Spicy
+          {sauce.spiceLabel ?? "Spicy"}
+        </Badge>
+      )}
+      {sauce.peppery && (
+        <Badge variant="outline">
+          <Flame />
+          Peppery
         </Badge>
       )}
     </div>
@@ -232,7 +246,7 @@ function SauceOption({
               )}
             </div>
             <p className="text-xs leading-relaxed text-muted-foreground">
-              {sauce.ingredients.map((i) => i.name).join(", ")}
+              {sauce.description}
             </p>
             <SauceTags sauce={sauce} />
           </div>
@@ -362,11 +376,11 @@ function PairingScreen({
   if (!item) return <HomeScreen />
   const showPastaArtwork =
     kind === "pasta" && pasta && hasPastaArtwork(pasta.id)
-  // Each sauce has at least three compatible pastas. Show three suggestions per wireframe.
+  // Show every supplied pairing in either selection direction.
   const matches =
     kind === "pasta"
       ? sauces.filter((s) => pasta?.sauceIds.includes(s.id))
-      : pastas.filter((p) => p.sauceIds.includes(sauce!.id)).slice(0, 3)
+      : sauce!.pastaIds.map((id) => pastas.find((p) => p.id === id)!)
   return (
     <div className="flex flex-1 flex-col gap-6 px-5 pt-6">
       <RecipeStepper first={kind} currentStep={2} />
@@ -648,7 +662,7 @@ function RecipeScreen({
             <h2 className="text-lg font-semibold">Let’s make it</h2>
             <Badge variant="secondary">
               <Clock3 />
-              {sauce.minutes} min total
+              {sauceTime(sauce)}
             </Badge>
           </div>
           <ol className="space-y-5">
