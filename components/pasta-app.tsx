@@ -144,13 +144,13 @@ function Actions({
   disabled: boolean
 }) {
   return (
-    <div className="sticky bottom-0 mt-auto grid grid-cols-2 gap-3 border-t bg-background/95 py-4 backdrop-blur-sm">
+    <div className="grid shrink-0 grid-cols-2 gap-3 border-t bg-background px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
       <Button variant="outline" className="h-12" onClick={back}>
         <ArrowLeft />
         Go back
       </Button>
       <Button className="h-12" disabled={disabled} onClick={select}>
-        Select
+        Next
         <ArrowRight />
       </Button>
     </div>
@@ -273,80 +273,83 @@ function ListScreen({
   )
   const [selection, setSelection] = useState<string | undefined>(selectedId)
   return (
-    <div className="flex flex-1 flex-col gap-6 px-5 pt-6">
-      <RecipeStepper first={kind} currentStep={1} />
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Choose your {kind}
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {kind === "pasta"
-            ? "What do you have in your cupboard?"
-            : "What are you in the mood for?"}
-        </p>
-      </div>
-      <Tabs
-        value={category}
-        onValueChange={(value) => {
-          setCategory(String(value))
-          setSelection(undefined)
-        }}
-        className="gap-5"
-      >
-        <div className="overflow-x-auto pb-1">
-          <TabsList className="min-w-max">
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+        <div className="flex flex-col gap-6 px-5 py-6">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight">
+              Pick your {kind}
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {kind === "pasta"
+                ? "What do you have in your cupboard?"
+                : "What are you in the mood for?"}
+            </p>
+          </div>
+          <Tabs
+            value={category}
+            onValueChange={(value) => {
+              setCategory(String(value))
+              setSelection(undefined)
+            }}
+            className="gap-5"
+          >
+            <div className="overflow-x-auto pb-1">
+              <TabsList className="min-w-max">
+                {categories.map((c) => (
+                  <TabsTrigger
+                    key={c}
+                    value={c}
+                    className="px-3 text-xs sm:text-sm"
+                  >
+                    {c}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
             {categories.map((c) => (
-              <TabsTrigger
-                key={c}
-                value={c}
-                className="px-3 text-xs sm:text-sm"
-              >
-                {c}
-              </TabsTrigger>
+              <TabsContent value={c} key={c}>
+                {kind === "pasta" ? (
+                  <div className="grid grid-cols-3 gap-3">
+                    {pastas
+                      .filter((p) => p.category === c)
+                      .map((p) => (
+                        <PastaOption
+                          key={p.id}
+                          previewArtwork
+                          pasta={p}
+                          selected={selection === p.id}
+                          onClick={() => setSelection(p.id)}
+                        />
+                      ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    {sauces
+                      .filter((s) => s.category === c)
+                      .map((s) => (
+                        <SauceOption
+                          key={s.id}
+                          sauce={s}
+                          selected={selection === s.id}
+                          onClick={() => setSelection(s.id)}
+                        />
+                      ))}
+                  </div>
+                )}
+              </TabsContent>
             ))}
-          </TabsList>
+          </Tabs>
+          <p
+            className="text-center text-xs text-muted-foreground"
+            aria-live="polite"
+          >
+            {selection
+              ? `${(kind === "pasta" ? pastas : sauces).find((item) => item.id === selection)?.name} selected`
+              : `Pick a ${kind} to continue`}
+          </p>
         </div>
-        {categories.map((c) => (
-          <TabsContent value={c} key={c}>
-            {kind === "pasta" ? (
-              <div className="grid grid-cols-3 gap-3">
-                {pastas
-                  .filter((p) => p.category === c)
-                  .map((p) => (
-                    <PastaOption
-                      key={p.id}
-                      previewArtwork
-                      pasta={p}
-                      selected={selection === p.id}
-                      onClick={() => setSelection(p.id)}
-                    />
-                  ))}
-              </div>
-            ) : (
-              <div className="flex flex-col gap-3">
-                {sauces
-                  .filter((s) => s.category === c)
-                  .map((s) => (
-                    <SauceOption
-                      key={s.id}
-                      sauce={s}
-                      selected={selection === s.id}
-                      onClick={() => setSelection(s.id)}
-                    />
-                  ))}
-              </div>
-            )}
-          </TabsContent>
-        ))}
-      </Tabs>
-      <p
-        className="text-center text-xs text-muted-foreground"
-        aria-live="polite"
-      >
-        {selection
-          ? `${(kind === "pasta" ? pastas : sauces).find((item) => item.id === selection)?.name} selected`
-          : `Pick a ${kind} to continue`}
-      </p>
+      </div>
       <Actions
         back={() => navigate("home")}
         disabled={!selection}
@@ -382,67 +385,72 @@ function PairingScreen({
       ? sauces.filter((s) => pasta?.sauceIds.includes(s.id))
       : sauce!.pastaIds.map((id) => pastas.find((p) => p.id === id)!)
   return (
-    <div className="flex flex-1 flex-col gap-6 px-5 pt-6">
-      <RecipeStepper first={kind} currentStep={2} />
-      <div className="flex items-start gap-3 sm:gap-5">
-        <motion.div
-          className={cn(
-            "relative flex aspect-square w-[45%] max-w-[157px] shrink-0 justify-center rounded-2xl bg-muted/30",
-            showPastaArtwork ? "overflow-visible" : "overflow-hidden"
-          )}
-          initial={false}
-          animate="rest"
-          whileHover={showPastaArtwork ? "buoyant" : undefined}
-        >
-          {kind === "pasta" && pasta && hasPastaArtwork(pasta.id) ? (
-            <PastaArtwork id={pasta.id} />
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+        <div className="flex flex-col gap-6 px-5 py-6">
+          <div className="flex items-start gap-3 sm:gap-5">
+            <motion.div
+              className={cn(
+                "relative flex aspect-square w-[45%] max-w-[157px] shrink-0 justify-center rounded-2xl bg-muted/30",
+                showPastaArtwork ? "overflow-visible" : "overflow-hidden"
+              )}
+              initial={false}
+              animate="rest"
+              whileHover={showPastaArtwork ? "buoyant" : undefined}
+            >
+              {kind === "pasta" && pasta && hasPastaArtwork(pasta.id) ? (
+                <PastaArtwork id={pasta.id} />
+              ) : (
+                <WireImage kind="selection" className="max-w-full" />
+              )}
+            </motion.div>
+            <div className="min-w-0 space-y-2">
+              <p className="text-xs text-muted-foreground">Your {kind}</p>
+              <h1 className="text-xl font-semibold tracking-tight">
+                {item.name}
+              </h1>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {item.description}
+              </p>
+              {kind === "sauce" && sauce && <SauceTags sauce={sauce} />}
+            </div>
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold">
+              {kind === "pasta"
+                ? "Sauces that go together"
+                : "Find its pasta match"}
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Three good matches. Pick your favorite.
+            </p>
+          </div>
+          {kind === "pasta" ? (
+            <div className="flex flex-col gap-3">
+              {(matches as Sauce[]).map((s) => (
+                <SauceOption
+                  key={s.id}
+                  sauce={s}
+                  selected={selection === s.id}
+                  onClick={() => setSelection(s.id)}
+                />
+              ))}
+            </div>
           ) : (
-            <WireImage kind="selection" className="max-w-full" />
+            <div className="grid grid-cols-3 gap-3">
+              {(matches as Pasta[]).map((p) => (
+                <PastaOption
+                  key={p.id}
+                  previewArtwork
+                  pasta={p}
+                  selected={selection === p.id}
+                  onClick={() => setSelection(p.id)}
+                />
+              ))}
+            </div>
           )}
-        </motion.div>
-        <div className="min-w-0 space-y-2">
-          <p className="text-xs text-muted-foreground">Your {kind}</p>
-          <h1 className="text-xl font-semibold tracking-tight">{item.name}</h1>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            {item.description}
-          </p>
-          {kind === "sauce" && sauce && <SauceTags sauce={sauce} />}
         </div>
       </div>
-      <div>
-        <h2 className="text-lg font-semibold">
-          {kind === "pasta"
-            ? "Sauces that go together"
-            : "Find its pasta match"}
-        </h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Three good matches. Choose your favorite.
-        </p>
-      </div>
-      {kind === "pasta" ? (
-        <div className="flex flex-col gap-3">
-          {(matches as Sauce[]).map((s) => (
-            <SauceOption
-              key={s.id}
-              sauce={s}
-              selected={selection === s.id}
-              onClick={() => setSelection(s.id)}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-3 gap-3">
-          {(matches as Pasta[]).map((p) => (
-            <PastaOption
-              key={p.id}
-              previewArtwork
-              pasta={p}
-              selected={selection === p.id}
-              onClick={() => setSelection(p.id)}
-            />
-          ))}
-        </div>
-      )}
       <Actions
         back={() =>
           navigate(kind === "pasta" ? "pasta-list" : "sauce-list", {
@@ -524,7 +532,7 @@ function LoadingScreen() {
     return () => window.clearTimeout(timer)
   }, [])
   return (
-    <div className="relative flex min-h-svh flex-col items-center justify-center gap-5 overflow-hidden bg-primary/10 px-6">
+    <div className="relative flex min-h-full flex-col items-center justify-center gap-5 overflow-hidden bg-primary/10 px-6">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         alt=""
@@ -595,11 +603,6 @@ function RecipeScreen({
   }
   return (
     <div className="flex flex-1 flex-col">
-      {(from === "pasta" || from === "sauce") && (
-        <div className="px-5 pt-6 pb-2">
-          <RecipeStepper first={from} currentStep={3} />
-        </div>
-      )}
       <div className="flex items-center justify-between px-5 pt-4">
         <Button variant="ghost" onClick={back}>
           <ArrowLeft />
@@ -715,82 +718,116 @@ export function PastaApp() {
   const params = new URLSearchParams(query)
   const pasta = pastas.find((p) => p.id === params.get("pasta"))
   const sauce = sauces.find((s) => s.id === params.get("sauce"))
+  const from = params.get("from") ?? "surprise"
+  const progress: { first: "pasta" | "sauce"; currentStep: 1 | 2 | 3 } | null =
+    screen === "pasta-list" || screen === "sauce-list"
+      ? { first: screen === "pasta-list" ? "pasta" : "sauce", currentStep: 1 }
+      : screen === "pasta-result" && pasta
+        ? { first: "pasta", currentStep: 2 }
+        : screen === "sauce-result" && sauce
+          ? { first: "sauce", currentStep: 2 }
+          : screen === "result" &&
+              pasta &&
+              sauce &&
+              pasta.sauceIds.includes(sauce.id) &&
+              (from === "pasta" || from === "sauce")
+            ? { first: from, currentStep: 3 }
+            : null
   const { resolvedTheme, setTheme } = useTheme()
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" })
   }, [hash])
   return (
-    <main className="min-h-svh bg-muted/40 sm:py-6">
-      <div className="mx-auto flex min-h-svh w-full max-w-[700px] flex-col overflow-clip bg-background sm:min-h-[calc(100svh-3rem)] sm:rounded-3xl sm:border sm:shadow-sm">
+    <main className="h-dvh overflow-hidden bg-(--app-surround) [--app-surround:color-mix(in_oklab,var(--muted)_40%,var(--background))] sm:py-6">
+      <div className="mx-auto flex h-full min-h-0 w-full max-w-[700px] flex-col overflow-hidden bg-background sm:rounded-3xl sm:border sm:shadow-sm">
         {screen !== "loading" && (
-          <header className="flex h-14 shrink-0 items-center justify-between border-b px-5">
-            <Button
-              variant="ghost"
-              className="gap-2 px-0 text-base font-semibold"
-              onClick={() => navigate("home")}
-              aria-label="Pastapp home"
-            >
-              <ChefHat className="size-5" />
-              pastapp
-            </Button>
-            <div className="flex gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Go to home"
-                onClick={() => navigate("home")}
-              >
-                <Home />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Toggle color theme"
-                onClick={() =>
-                  setTheme(resolvedTheme === "dark" ? "light" : "dark")
-                }
-              >
-                <Sun className="dark:hidden" />
-                <Moon className="hidden dark:block" />
-              </Button>
+          <div className="z-10 shrink-0 bg-background">
+            <div className="bg-background">
+              <header className="flex h-14 shrink-0 items-center justify-between border-b px-5">
+                <Button
+                  variant="ghost"
+                  className="gap-2 px-0 text-base font-semibold"
+                  onClick={() => navigate("home")}
+                  aria-label="Pastapp home"
+                >
+                  <ChefHat className="size-5" />
+                  pastapp
+                </Button>
+                <div className="flex gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Go to home"
+                    onClick={() => navigate("home")}
+                  >
+                    <Home />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Toggle color theme"
+                    onClick={() =>
+                      setTheme(resolvedTheme === "dark" ? "light" : "dark")
+                    }
+                  >
+                    <Sun className="dark:hidden" />
+                    <Moon className="hidden dark:block" />
+                  </Button>
+                </div>
+              </header>
+              {progress && (
+                <div className="border-b px-5 py-4">
+                  <RecipeStepper {...progress} />
+                </div>
+              )}
             </div>
-          </header>
+          </div>
         )}
-        {screen === "loading" && <LoadingScreen />}
-        {screen === "home" && <HomeScreen />}
-        {(screen === "pasta-list" || screen === "sauce-list") && (
-          <ListScreen
-            key={screen + query}
-            kind={screen === "pasta-list" ? "pasta" : "sauce"}
-            selectedId={
-              params.get(screen === "pasta-list" ? "pasta" : "sauce") ??
-              undefined
-            }
-          />
-        )}
-        {(screen === "pasta-result" || screen === "sauce-result") && (
-          <PairingScreen
-            key={screen + query}
-            kind={screen === "pasta-result" ? "pasta" : "sauce"}
-            pasta={pasta}
-            sauce={sauce}
-            selectedMatch={
-              params.get(screen === "pasta-result" ? "sauce" : "pasta") ??
-              undefined
-            }
-          />
-        )}
-        {screen === "result" &&
-          (pasta && sauce && pasta.sauceIds.includes(sauce.id) ? (
-            <RecipeScreen
-              key={query}
+        <div
+          key={hash}
+          className={cn(
+            "flex min-h-0 flex-1 flex-col",
+            progress && progress.currentStep < 3
+              ? "overflow-hidden"
+              : "overflow-y-auto overscroll-contain"
+          )}
+        >
+          {screen === "loading" && <LoadingScreen />}
+          {screen === "home" && <HomeScreen />}
+          {(screen === "pasta-list" || screen === "sauce-list") && (
+            <ListScreen
+              key={screen + query}
+              kind={screen === "pasta-list" ? "pasta" : "sauce"}
+              selectedId={
+                params.get(screen === "pasta-list" ? "pasta" : "sauce") ??
+                undefined
+              }
+            />
+          )}
+          {(screen === "pasta-result" || screen === "sauce-result") && (
+            <PairingScreen
+              key={screen + query}
+              kind={screen === "pasta-result" ? "pasta" : "sauce"}
               pasta={pasta}
               sauce={sauce}
-              from={params.get("from") ?? "surprise"}
+              selectedMatch={
+                params.get(screen === "pasta-result" ? "sauce" : "pasta") ??
+                undefined
+              }
             />
-          ) : (
-            <HomeScreen />
-          ))}
+          )}
+          {screen === "result" &&
+            (pasta && sauce && pasta.sauceIds.includes(sauce.id) ? (
+              <RecipeScreen
+                key={query}
+                pasta={pasta}
+                sauce={sauce}
+                from={from}
+              />
+            ) : (
+              <HomeScreen />
+            ))}
+        </div>
       </div>
     </main>
   )
