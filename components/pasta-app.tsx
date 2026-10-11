@@ -186,9 +186,9 @@ function PastaOption({
       <Card
         size="sm"
         className={cn(
-          "gap-2 rounded-2xl p-2 shadow-none ring-1 ring-border",
+          "gap-2 rounded-2xl p-2 shadow-none ring-1 ring-border dark:ring-border",
           showArtwork && "overflow-visible",
-          selected && "ring-2 ring-primary"
+          selected && "ring-2 ring-primary dark:ring-primary"
         )}
       >
         <div
@@ -232,8 +232,8 @@ function SauceOption({
       <Card
         size="sm"
         className={cn(
-          "rounded-2xl p-3 shadow-none ring-1 ring-border",
-          selected && "bg-primary/10 ring-2 ring-primary"
+          "rounded-2xl p-3 shadow-none ring-1 ring-border dark:ring-border",
+          selected && "bg-primary/10 ring-2 ring-primary dark:ring-primary"
         )}
       >
         <div className="flex items-start gap-3">
@@ -310,7 +310,7 @@ function ListScreen({
             {categories.map((c) => (
               <TabsContent value={c} key={c}>
                 {kind === "pasta" ? (
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                     {pastas
                       .filter((p) => p.category === c)
                       .map((p) => (
@@ -437,7 +437,7 @@ function PairingScreen({
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {(matches as Pasta[]).map((p) => (
                 <PastaOption
                   key={p.id}
