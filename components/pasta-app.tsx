@@ -26,6 +26,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { RecipeStepper } from "@/components/recipe-stepper"
+import { PastaPhysics } from "@/components/pasta-physics"
 import {
   hasPastaArtwork,
   PastaArtwork,
@@ -482,8 +483,8 @@ function HomeScreen() {
   return (
     <div className="flex flex-1 flex-col gap-6 px-5 pt-5 pb-8">
       <div className="relative flex h-60 items-center justify-center overflow-hidden rounded-3xl bg-primary/15">
-        <WireImage kind="home" className="absolute opacity-15" />
-        <div className="relative space-y-2 text-center">
+        <PastaPhysics />
+        <div className="relative z-10 space-y-2 text-center">
           <ChefHat className="mx-auto size-9" />
           <h1 className="text-4xl font-semibold tracking-tight">pastapp</h1>
           <p className="text-sm text-muted-foreground">
@@ -533,23 +534,24 @@ function LoadingScreen() {
   }, [])
   return (
     <div className="relative flex min-h-full flex-col items-center justify-center gap-5 overflow-hidden bg-primary/10 px-6">
+      <PastaPhysics />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         alt=""
         src="/wireframe/splash.svg"
         width="390"
         height="840"
-        className="pointer-events-none absolute opacity-10 dark:invert"
+        className="pointer-events-none absolute z-0 opacity-10 dark:invert"
       />
-      <ChefHat className="relative size-12" />
-      <h1 className="relative text-4xl font-semibold tracking-tight">
+      <ChefHat className="relative z-10 size-12" />
+      <h1 className="relative z-10 text-4xl font-semibold tracking-tight">
         pastapp
       </h1>
-      <p className="relative text-sm text-muted-foreground">
+      <p className="relative z-10 text-sm text-muted-foreground">
         Something tasty starts here.
       </p>
       <Button
-        className="relative mt-4 h-12 px-8"
+        className="relative z-10 mt-4 h-12 px-8"
         onClick={() => navigate("home")}
       >
         Start
