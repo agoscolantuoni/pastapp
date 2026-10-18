@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react"
+import Image from "next/image"
 import { motion } from "motion/react"
 import {
   ArrowLeft,
@@ -33,6 +34,7 @@ import {
   PastaIngredientImage,
 } from "@/components/pasta-artwork"
 import { cn } from "@/lib/utils"
+import { getIngredientArtwork } from "@/lib/ingredient-artwork"
 import {
   pastas,
   sauces,
@@ -640,25 +642,38 @@ function RecipeScreen({
           </div>
           <p className="text-xs text-muted-foreground">For 2 people</p>
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-            {ingredients.map((i, index) => (
-              <Card
-                key={i.name}
-                size="sm"
-                className="rounded-2xl py-3 shadow-none ring-1 ring-border"
-              >
-                <CardContent className="flex flex-col items-center gap-2 px-2 text-center">
-                  {index === 0 && hasPastaArtwork(pasta.id) ? (
-                    <PastaIngredientImage id={pasta.id} />
-                  ) : (
-                    <WireImage kind="ingredient" />
-                  )}
-                  <span className="text-xs font-medium">{i.name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {i.quantity}
-                  </span>
-                </CardContent>
-              </Card>
-            ))}
+            {ingredients.map((i, index) => {
+              const artwork =
+                index > 0 ? getIngredientArtwork(i.name) : undefined
+              return (
+                <Card
+                  key={i.name}
+                  size="sm"
+                  className="rounded-2xl py-3 shadow-none ring-1 ring-border"
+                >
+                  <CardContent className="flex flex-col items-center gap-2 px-2 text-center">
+                    {index === 0 && hasPastaArtwork(pasta.id) ? (
+                      <PastaIngredientImage id={pasta.id} />
+                    ) : artwork ? (
+                      <Image
+                        src={artwork.src}
+                        alt=""
+                        width={artwork.width}
+                        height={artwork.height}
+                        sizes="53px"
+                        className="size-[53px] object-contain"
+                      />
+                    ) : (
+                      <WireImage kind="ingredient" />
+                    )}
+                    <span className="text-xs font-medium">{i.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {i.quantity}
+                    </span>
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
         </section>
         <Separator />

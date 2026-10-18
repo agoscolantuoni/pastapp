@@ -1236,13 +1236,23 @@ export function sauceTime(sauce: Sauce): string {
   return sauce.timeLabel ?? `${sauce.minutes} min`
 }
 export function recipeIngredients(pasta: Pasta, sauce: Sauce): Ingredient[] {
+  const hasSauceSalt = sauce.ingredients.some(({ name }) => name === "Salt")
   return [
     {
       name: pasta.name,
       quantity: pasta.category === "Filled pasta" ? "250 g" : "180–200 g",
     },
-    ...sauce.ingredients,
-    { name: "Salt for the pasta water", quantity: "As needed" },
+    ...sauce.ingredients.map((ingredient) =>
+      ingredient.name === "Salt"
+        ? {
+            ...ingredient,
+            quantity: `For pasta water; ${ingredient.quantity.toLowerCase()} for the sauce`,
+          }
+        : ingredient
+    ),
+    ...(hasSauceSalt
+      ? []
+      : [{ name: "Salt for the pasta water", quantity: "As needed" }]),
   ]
 }
 export function recipeSteps(pasta: Pasta, sauce: Sauce): string[] {
