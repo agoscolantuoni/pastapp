@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react"
+import Image from "next/image"
 import { motion } from "motion/react"
 import {
   ArrowLeft,
@@ -33,6 +34,8 @@ import {
   PastaIngredientImage,
 } from "@/components/pasta-artwork"
 import { cn } from "@/lib/utils"
+import { getIngredientArtwork } from "@/lib/ingredient-artwork"
+import { SauceArtwork } from "@/components/sauce-artwork"
 import {
   pastas,
   sauces,
@@ -224,10 +227,15 @@ function SauceOption({
   onClick: () => void
 }) {
   return (
-    <button
+    <motion.button
       type="button"
       aria-pressed={selected}
       onClick={onClick}
+      initial={false}
+      animate="rest"
+      whileHover="buoyant"
+      whileFocus="buoyant"
+      whileTap="pressed"
       className="rounded-2xl text-left outline-none focus-visible:ring-3 focus-visible:ring-ring"
     >
       <Card
@@ -238,7 +246,9 @@ function SauceOption({
         )}
       >
         <div className="flex items-start gap-3">
-          <WireImage kind="sauce" className="shrink-0 rounded-xl" />
+          <div className="relative size-[76px] shrink-0 rounded-xl bg-muted/30">
+            <SauceArtwork sauce={sauce} compact />
+          </div>
           <div className="min-w-0 flex-1 space-y-2">
             <div className="flex items-start justify-between gap-1">
               <h3 className="text-sm font-semibold">{sauce.name}</h3>
@@ -253,7 +263,7 @@ function SauceOption({
           </div>
         </div>
       </Card>
-    </button>
+    </motion.button>
   )
 }
 
@@ -380,6 +390,7 @@ function PairingScreen({
   if (!item) return <HomeScreen />
   const showPastaArtwork =
     kind === "pasta" && pasta && hasPastaArtwork(pasta.id)
+  const showArtwork = showPastaArtwork || (kind === "sauce" && !!sauce)
   // Show every supplied pairing in either selection direction.
   const matches =
     kind === "pasta"
@@ -393,14 +404,16 @@ function PairingScreen({
             <motion.div
               className={cn(
                 "relative flex aspect-square w-[45%] max-w-[157px] shrink-0 justify-center rounded-2xl bg-muted/30",
-                showPastaArtwork ? "overflow-visible" : "overflow-hidden"
+                showArtwork ? "overflow-visible" : "overflow-hidden"
               )}
               initial={false}
               animate="rest"
-              whileHover={showPastaArtwork ? "buoyant" : undefined}
+              whileHover={showArtwork ? "buoyant" : undefined}
             >
               {kind === "pasta" && pasta && hasPastaArtwork(pasta.id) ? (
                 <PastaArtwork id={pasta.id} />
+              ) : kind === "sauce" && sauce ? (
+                <SauceArtwork sauce={sauce} />
               ) : (
                 <WireImage kind="selection" className="max-w-full" />
               )}
@@ -640,25 +653,40 @@ function RecipeScreen({
           </div>
           <p className="text-xs text-muted-foreground">For 2 people</p>
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-            {ingredients.map((i, index) => (
-              <Card
-                key={i.name}
-                size="sm"
-                className="rounded-2xl py-3 shadow-none ring-1 ring-border"
-              >
-                <CardContent className="flex flex-col items-center gap-2 px-2 text-center">
-                  {index === 0 && hasPastaArtwork(pasta.id) ? (
-                    <PastaIngredientImage id={pasta.id} />
-                  ) : (
-                    <WireImage kind="ingredient" />
-                  )}
-                  <span className="text-xs font-medium">{i.name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {i.quantity}
-                  </span>
-                </CardContent>
-              </Card>
-            ))}
+            {ingredients.map((i, index) => {
+              const artwork =
+                index > 0
+                  ? getIngredientArtwork(i.name, sauce.category)
+                  : undefined
+              return (
+                <Card
+                  key={i.name}
+                  size="sm"
+                  className="rounded-2xl py-3 shadow-none ring-1 ring-border"
+                >
+                  <CardContent className="flex flex-col items-center gap-2 px-2 text-center">
+                    {index === 0 && hasPastaArtwork(pasta.id) ? (
+                      <PastaIngredientImage id={pasta.id} />
+                    ) : artwork ? (
+                      <Image
+                        src={artwork.src}
+                        alt=""
+                        width={artwork.width}
+                        height={artwork.height}
+                        sizes="53px"
+                        className="size-[53px] object-contain"
+                      />
+                    ) : (
+                      <WireImage kind="ingredient" />
+                    )}
+                    <span className="text-xs font-medium">{i.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {i.quantity}
+                    </span>
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
         </section>
         <Separator />
