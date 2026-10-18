@@ -164,8 +164,12 @@ const ingredientArtwork: Record<string, IngredientArtwork> = {
 }
 
 export function getIngredientArtwork(
-  name: string
+  name: string,
+  sauceCategory?: string
 ): IngredientArtwork | undefined {
+  if (name === "Olives" && sauceCategory === "Cold & fresh") {
+    return { src: "/ingredients/olives.png", width: 192, height: 192 }
+  }
   return Object.hasOwn(ingredientArtwork, name)
     ? ingredientArtwork[name]
     : undefined

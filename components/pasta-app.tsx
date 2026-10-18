@@ -644,7 +644,9 @@ function RecipeScreen({
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
             {ingredients.map((i, index) => {
               const artwork =
-                index > 0 ? getIngredientArtwork(i.name) : undefined
+                index > 0
+                  ? getIngredientArtwork(i.name, sauce.category)
+                  : undefined
               return (
                 <Card
                   key={i.name}
