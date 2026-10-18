@@ -35,6 +35,7 @@ import {
 } from "@/components/pasta-artwork"
 import { cn } from "@/lib/utils"
 import { getIngredientArtwork } from "@/lib/ingredient-artwork"
+import { SauceArtwork } from "@/components/sauce-artwork"
 import {
   pastas,
   sauces,
@@ -226,10 +227,15 @@ function SauceOption({
   onClick: () => void
 }) {
   return (
-    <button
+    <motion.button
       type="button"
       aria-pressed={selected}
       onClick={onClick}
+      initial={false}
+      animate="rest"
+      whileHover="buoyant"
+      whileFocus="buoyant"
+      whileTap="pressed"
       className="rounded-2xl text-left outline-none focus-visible:ring-3 focus-visible:ring-ring"
     >
       <Card
@@ -240,7 +246,9 @@ function SauceOption({
         )}
       >
         <div className="flex items-start gap-3">
-          <WireImage kind="sauce" className="shrink-0 rounded-xl" />
+          <div className="relative size-[76px] shrink-0 rounded-xl bg-muted/30">
+            <SauceArtwork sauce={sauce} compact />
+          </div>
           <div className="min-w-0 flex-1 space-y-2">
             <div className="flex items-start justify-between gap-1">
               <h3 className="text-sm font-semibold">{sauce.name}</h3>
@@ -255,7 +263,7 @@ function SauceOption({
           </div>
         </div>
       </Card>
-    </button>
+    </motion.button>
   )
 }
 
@@ -382,6 +390,7 @@ function PairingScreen({
   if (!item) return <HomeScreen />
   const showPastaArtwork =
     kind === "pasta" && pasta && hasPastaArtwork(pasta.id)
+  const showArtwork = showPastaArtwork || (kind === "sauce" && !!sauce)
   // Show every supplied pairing in either selection direction.
   const matches =
     kind === "pasta"
@@ -395,14 +404,16 @@ function PairingScreen({
             <motion.div
               className={cn(
                 "relative flex aspect-square w-[45%] max-w-[157px] shrink-0 justify-center rounded-2xl bg-muted/30",
-                showPastaArtwork ? "overflow-visible" : "overflow-hidden"
+                showArtwork ? "overflow-visible" : "overflow-hidden"
               )}
               initial={false}
               animate="rest"
-              whileHover={showPastaArtwork ? "buoyant" : undefined}
+              whileHover={showArtwork ? "buoyant" : undefined}
             >
               {kind === "pasta" && pasta && hasPastaArtwork(pasta.id) ? (
                 <PastaArtwork id={pasta.id} />
+              ) : kind === "sauce" && sauce ? (
+                <SauceArtwork sauce={sauce} />
               ) : (
                 <WireImage kind="selection" className="max-w-full" />
               )}
