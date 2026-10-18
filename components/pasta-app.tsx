@@ -28,6 +28,7 @@ import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { RecipeStepper } from "@/components/recipe-stepper"
 import { PastaPhysics } from "@/components/pasta-physics"
+import { PairingHero } from "@/components/pairing-hero"
 import {
   hasPastaArtwork,
   PastaArtwork,
@@ -631,19 +632,8 @@ function RecipeScreen({
         )}
       </div>
       <div ref={recipeRef} className="space-y-6 bg-background px-5 pt-4 pb-6">
-        <div className="text-center">
-          <div className="mx-auto flex h-52 items-end justify-center overflow-hidden">
-            <WireImage kind="dish" className="shrink-0" />
-          </div>
-          <p className="mt-5 text-xs font-medium tracking-widest text-muted-foreground uppercase">
-            Your perfect pairing
-          </p>
-          <h1 className="mx-auto mt-2 max-w-sm text-2xl font-semibold tracking-tight">
-            {pasta.name} + {sauce.name}
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {sauce.description}
-          </p>
+        <div className="-mx-5">
+          <PairingHero pasta={pasta} sauce={sauce} />
         </div>
         <Separator />
         <section className="space-y-4">
