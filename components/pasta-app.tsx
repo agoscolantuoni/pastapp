@@ -254,7 +254,7 @@ function SauceOption({
             <div className="flex items-start justify-between gap-1">
               <h3 className="text-sm font-semibold">{sauce.name}</h3>
               {selected && (
-                <Check className="size-4 shrink-0 text-primary-foreground" />
+                <Check className="size-4 shrink-0 text-foreground" />
               )}
             </div>
             <p className="text-xs leading-relaxed text-muted-foreground">
