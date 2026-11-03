@@ -7,7 +7,6 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
-  ChefHat,
   Clock3,
   Download,
   Flame,
@@ -29,6 +28,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { RecipeStepper } from "@/components/recipe-stepper"
 import { PastaPhysics } from "@/components/pasta-physics"
 import { PairingHero } from "@/components/pairing-hero"
+import { BrandLogo } from "@/components/brand-logo"
 import {
   hasPastaArtwork,
   PastaArtwork,
@@ -499,8 +499,9 @@ function HomeScreen() {
       <div className="relative flex h-60 items-center justify-center overflow-hidden rounded-3xl bg-primary/15">
         <PastaPhysics />
         <div className="relative z-10 space-y-2 text-center">
-          <ChefHat className="mx-auto size-9" />
-          <h1 className="text-4xl font-semibold tracking-tight">pastapp</h1>
+          <h1>
+            <BrandLogo className="mx-auto" />
+          </h1>
           <p className="text-sm text-muted-foreground">
             A good match. A better meal.
           </p>
@@ -557,9 +558,8 @@ function LoadingScreen() {
         height="840"
         className="pointer-events-none absolute z-0 opacity-10 dark:invert"
       />
-      <ChefHat className="relative z-10 size-12" />
-      <h1 className="relative z-10 text-4xl font-semibold tracking-tight">
-        pastapp
+      <h1 className="relative z-10">
+        <BrandLogo />
       </h1>
       <p className="relative z-10 text-sm text-muted-foreground">
         Something tasty starts here.
@@ -699,8 +699,9 @@ function RecipeScreen({
             ))}
           </ol>
         </section>
-        <p className="pt-2 text-center text-xs text-muted-foreground">
-          pastapp · A good match. A better meal.
+        <p className="flex flex-wrap items-center justify-center gap-1 pt-2 text-center text-xs text-muted-foreground">
+          <BrandLogo className="w-10" />
+          <span>· A good match. A better meal.</span>
         </p>
       </div>
       <div className="space-y-3 border-t px-5 py-5">
@@ -770,8 +771,7 @@ export function PastaApp() {
                   onClick={() => navigate("home")}
                   aria-label="Pastapp home"
                 >
-                  <ChefHat className="size-5" />
-                  pastapp
+                  <BrandLogo className="w-24" />
                 </Button>
                 <div className="flex gap-1">
                   <Button
