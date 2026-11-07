@@ -670,11 +670,7 @@ function RecipeScreen({
           <ArrowLeft />
           Go back
         </Button>
-        <Button
-          className="h-12"
-          disabled={saving}
-          onClick={download}
-        >
+        <Button className="h-12" disabled={saving} onClick={download}>
           {saving ? <LoaderCircle className="animate-spin" /> : <Download />}
           <span>{saving ? "Saving…" : "Save recipe"}</span>
         </Button>
@@ -732,7 +728,7 @@ export function PastaApp() {
             <header className="flex h-14 shrink-0 items-center justify-between border-b px-5">
               <Button
                 variant="ghost"
-                className="gap-2 px-0 text-base font-semibold"
+                className="gap-2 px-0 text-base font-semibold hover:bg-transparent hover:text-muted-foreground active:scale-95 active:text-muted-foreground dark:hover:bg-transparent"
                 onClick={() => navigate("home")}
                 aria-label="Pastapp home"
               >
