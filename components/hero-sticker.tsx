@@ -16,7 +16,7 @@ export function HeroSticker() {
             className="h-auto w-full"
           />
         </h1>
-        <p className="absolute inset-x-[10%] top-[62.17%] text-center font-sans text-[11px] leading-snug text-black">
+        <p className="absolute inset-x-[10%] top-[62.17%] text-center font-sans text-[11px] leading-snug text-[#28231f]">
           A good match. A better meal.
         </p>
       </div>
