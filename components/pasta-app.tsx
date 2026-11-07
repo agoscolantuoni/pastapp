@@ -26,9 +26,10 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { RecipeStepper } from "@/components/recipe-stepper"
-import { PastaPhysics } from "@/components/pasta-physics"
 import { PairingHero } from "@/components/pairing-hero"
 import { BrandLogo } from "@/components/brand-logo"
+import { HeroSticker } from "@/components/hero-sticker"
+import { PastaPhysics } from "@/components/pasta-physics"
 import {
   hasPastaArtwork,
   PastaArtwork,
@@ -51,7 +52,6 @@ import {
 } from "@/lib/catalog"
 
 type Screen =
-  | "loading"
   | "home"
   | "pasta-list"
   | "pasta-result"
@@ -59,7 +59,6 @@ type Screen =
   | "sauce-result"
   | "result"
 const screens: Screen[] = [
-  "loading",
   "home",
   "pasta-list",
   "pasta-result",
@@ -496,16 +495,9 @@ function surprise() {
 function HomeScreen() {
   return (
     <div className="flex flex-1 flex-col gap-6 px-5 pt-5 pb-8">
-      <div className="relative flex h-60 items-center justify-center overflow-hidden rounded-3xl bg-primary/15">
+      <div className="relative flex h-60 shrink-0 items-center justify-center overflow-hidden rounded-3xl bg-primary">
         <PastaPhysics />
-        <div className="relative z-10 space-y-2 text-center">
-          <h1>
-            <BrandLogo className="mx-auto" />
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            A good match. A better meal.
-          </p>
-        </div>
+        <HeroSticker />
       </div>
       <div className="text-center">
         <h2 className="text-xl font-semibold">What are we cooking?</h2>
@@ -539,38 +531,6 @@ function HomeScreen() {
         Simple ingredients. Easy steps.
         <br />A little help making something tasty.
       </p>
-    </div>
-  )
-}
-function LoadingScreen() {
-  useEffect(() => {
-    const timer = window.setTimeout(() => navigate("home"), 1600)
-    return () => window.clearTimeout(timer)
-  }, [])
-  return (
-    <div className="relative flex min-h-full flex-col items-center justify-center gap-5 overflow-hidden bg-primary/10 px-6">
-      <PastaPhysics />
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        alt=""
-        src="/wireframe/splash.svg"
-        width="390"
-        height="840"
-        className="pointer-events-none absolute z-0 opacity-10 dark:invert"
-      />
-      <h1 className="relative z-10">
-        <BrandLogo />
-      </h1>
-      <p className="relative z-10 text-sm text-muted-foreground">
-        Something tasty starts here.
-      </p>
-      <Button
-        className="relative z-10 mt-4 h-12 px-8"
-        onClick={() => navigate("home")}
-      >
-        Start
-        <ArrowRight />
-      </Button>
     </div>
   )
 }
@@ -618,106 +578,114 @@ function RecipeScreen({
     else navigate("home")
   }
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="flex items-center justify-between px-5 pt-4">
-        <Button variant="ghost" onClick={back}>
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+        <div ref={recipeRef} className="space-y-6 bg-background px-5 pt-4 pb-6">
+          <div className="-mx-5">
+            <PairingHero pasta={pasta} sauce={sauce} />
+          </div>
+          <Separator />
+          <section className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="text-lg font-semibold">Ingredients</h2>
+              <SauceTags sauce={sauce} />
+            </div>
+            <p className="text-xs text-muted-foreground">For 2 people</p>
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+              {ingredients.map((i, index) => {
+                const artwork =
+                  index > 0
+                    ? getIngredientArtwork(i.name, sauce.category)
+                    : undefined
+                return (
+                  <Card
+                    key={i.name}
+                    size="sm"
+                    className="rounded-2xl py-3 shadow-none ring-1 ring-border"
+                  >
+                    <CardContent className="flex flex-col items-center gap-2 px-2 text-center">
+                      {index === 0 && hasPastaArtwork(pasta.id) ? (
+                        <PastaIngredientImage id={pasta.id} />
+                      ) : artwork ? (
+                        <Image
+                          src={artwork.src}
+                          alt=""
+                          width={artwork.width}
+                          height={artwork.height}
+                          sizes="53px"
+                          className="size-[53px] object-contain"
+                        />
+                      ) : (
+                        <WireImage kind="ingredient" />
+                      )}
+                      <span className="text-xs font-medium">{i.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {i.quantity}
+                      </span>
+                    </CardContent>
+                  </Card>
+                )
+              })}
+            </div>
+          </section>
+          <Separator />
+          <section className="space-y-5">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-lg font-semibold">Let’s make it</h2>
+              <Badge variant="secondary">
+                <Clock3 />
+                {sauceTime(sauce)}
+              </Badge>
+            </div>
+            <ol className="space-y-5">
+              {steps.map((step, index) => (
+                <li key={step} className="flex gap-3">
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-semibold">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <p className="pt-1 text-sm leading-relaxed">{step}</p>
+                </li>
+              ))}
+            </ol>
+          </section>
+          <p className="flex flex-wrap items-center justify-center gap-1 pt-2 text-center text-xs text-muted-foreground">
+            <BrandLogo className="w-20" />
+            <span>· A good match. A better meal.</span>
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center justify-center gap-x-4 px-5 pb-6">
+          <Button variant="link" onClick={() => navigate("home")}>
+            Start a new pairing
+          </Button>
+          {from === "surprise" && (
+            <Button variant="link" onClick={surprise}>
+              <Shuffle />
+              Try another
+            </Button>
+          )}
+        </div>
+      </div>
+      <div className="grid shrink-0 grid-cols-2 gap-3 border-t bg-background px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <Button variant="outline" className="h-12" onClick={back}>
           <ArrowLeft />
           Go back
         </Button>
-        {from === "surprise" && (
-          <Button variant="ghost" onClick={surprise}>
-            <Shuffle />
-            Try another
-          </Button>
-        )}
-      </div>
-      <div ref={recipeRef} className="space-y-6 bg-background px-5 pt-4 pb-6">
-        <div className="-mx-5">
-          <PairingHero pasta={pasta} sauce={sauce} />
-        </div>
-        <Separator />
-        <section className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-lg font-semibold">Ingredients</h2>
-            <SauceTags sauce={sauce} />
-          </div>
-          <p className="text-xs text-muted-foreground">For 2 people</p>
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-            {ingredients.map((i, index) => {
-              const artwork =
-                index > 0
-                  ? getIngredientArtwork(i.name, sauce.category)
-                  : undefined
-              return (
-                <Card
-                  key={i.name}
-                  size="sm"
-                  className="rounded-2xl py-3 shadow-none ring-1 ring-border"
-                >
-                  <CardContent className="flex flex-col items-center gap-2 px-2 text-center">
-                    {index === 0 && hasPastaArtwork(pasta.id) ? (
-                      <PastaIngredientImage id={pasta.id} />
-                    ) : artwork ? (
-                      <Image
-                        src={artwork.src}
-                        alt=""
-                        width={artwork.width}
-                        height={artwork.height}
-                        sizes="53px"
-                        className="size-[53px] object-contain"
-                      />
-                    ) : (
-                      <WireImage kind="ingredient" />
-                    )}
-                    <span className="text-xs font-medium">{i.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {i.quantity}
-                    </span>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
-        </section>
-        <Separator />
-        <section className="space-y-5">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="text-lg font-semibold">Let’s make it</h2>
-            <Badge variant="secondary">
-              <Clock3 />
-              {sauceTime(sauce)}
-            </Badge>
-          </div>
-          <ol className="space-y-5">
-            {steps.map((step, index) => (
-              <li key={step} className="flex gap-3">
-                <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-semibold">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <p className="pt-1 text-sm leading-relaxed">{step}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
-        <p className="flex flex-wrap items-center justify-center gap-1 pt-2 text-center text-xs text-muted-foreground">
-          <BrandLogo className="w-10" />
-          <span>· A good match. A better meal.</span>
-        </p>
-      </div>
-      <div className="space-y-3 border-t px-5 py-5">
-        <Button className="h-12 w-full" disabled={saving} onClick={download}>
-          {saving ? <LoaderCircle className="animate-spin" /> : <Download />}
-          {saving ? "Saving recipe…" : "Save recipe as image"}
-        </Button>
         <Button
-          variant="outline"
-          className="h-12 w-full"
-          onClick={() => navigate("home")}
+          className="h-12"
+          disabled={saving}
+          onClick={download}
         >
-          <Home />
-          Start a new pairing
+          {saving ? <LoaderCircle className="animate-spin" /> : <Download />}
+          <span>{saving ? "Saving…" : "Save recipe"}</span>
         </Button>
-        <p role="status" className="text-center text-xs text-muted-foreground">
+        <p
+          role="status"
+          className={
+            message
+              ? "col-span-2 text-center text-xs text-muted-foreground"
+              : "sr-only"
+          }
+        >
           {message}
         </p>
       </div>
@@ -733,9 +701,7 @@ export function PastaApp() {
   const [name, query = ""] = hash.replace(/^#/, "").split("?")
   const screen: Screen = screens.includes(name as Screen)
     ? (name as Screen)
-    : hash
-      ? "home"
-      : "loading"
+    : "home"
   const params = new URLSearchParams(query)
   const pasta = pastas.find((p) => p.id === params.get("pasta"))
   const sauce = sauces.find((s) => s.id === params.get("sauce"))
@@ -761,58 +727,55 @@ export function PastaApp() {
   return (
     <main className="h-dvh overflow-hidden bg-(--app-surround) [--app-surround:color-mix(in_oklab,var(--muted)_40%,var(--background))] sm:py-6">
       <div className="mx-auto flex h-full min-h-0 w-full max-w-[700px] flex-col overflow-hidden bg-background sm:rounded-3xl sm:border sm:shadow-sm">
-        {screen !== "loading" && (
-          <div className="z-10 shrink-0 bg-background">
-            <div className="bg-background">
-              <header className="flex h-14 shrink-0 items-center justify-between border-b px-5">
+        <div className="z-10 shrink-0 bg-background">
+          <div className="bg-background">
+            <header className="flex h-14 shrink-0 items-center justify-between border-b px-5">
+              <Button
+                variant="ghost"
+                className="gap-2 px-0 text-base font-semibold"
+                onClick={() => navigate("home")}
+                aria-label="Pastapp home"
+              >
+                <BrandLogo className="w-24" />
+              </Button>
+              <div className="flex gap-1">
                 <Button
                   variant="ghost"
-                  className="gap-2 px-0 text-base font-semibold"
+                  size="icon"
+                  aria-label="Go to home"
                   onClick={() => navigate("home")}
-                  aria-label="Pastapp home"
                 >
-                  <BrandLogo className="w-24" />
+                  <Home />
                 </Button>
-                <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label="Go to home"
-                    onClick={() => navigate("home")}
-                  >
-                    <Home />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label="Toggle color theme"
-                    onClick={() =>
-                      setTheme(resolvedTheme === "dark" ? "light" : "dark")
-                    }
-                  >
-                    <Sun className="dark:hidden" />
-                    <Moon className="hidden dark:block" />
-                  </Button>
-                </div>
-              </header>
-              {progress && (
-                <div className="border-b px-5 py-4">
-                  <RecipeStepper {...progress} />
-                </div>
-              )}
-            </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Toggle color theme"
+                  onClick={() =>
+                    setTheme(resolvedTheme === "dark" ? "light" : "dark")
+                  }
+                >
+                  <Sun className="dark:hidden" />
+                  <Moon className="hidden dark:block" />
+                </Button>
+              </div>
+            </header>
+            {progress && (
+              <div className="border-b px-5 py-4">
+                <RecipeStepper {...progress} />
+              </div>
+            )}
           </div>
-        )}
+        </div>
         <div
           key={hash}
           className={cn(
             "flex min-h-0 flex-1 flex-col",
-            progress && progress.currentStep < 3
+            screen === "result" || (progress && progress.currentStep < 3)
               ? "overflow-hidden"
               : "overflow-y-auto overscroll-contain"
           )}
         >
-          {screen === "loading" && <LoadingScreen />}
           {screen === "home" && <HomeScreen />}
           {(screen === "pasta-list" || screen === "sauce-list") && (
             <ListScreen
