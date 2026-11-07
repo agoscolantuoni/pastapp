@@ -33,7 +33,7 @@ export function PastaPhysics({ className = "" }: { className?: string }) {
     const canvas = canvasRef.current
     const context = canvas?.getContext("2d")
     if (!canvas || !context) return
-    const pieces = createPastaPieces(isDesktop ? 10 : 7)
+    const pieces = createPastaPieces(isDesktop ? 12 : 9)
 
     const engine = Engine.create({
       enableSleeping: true,
