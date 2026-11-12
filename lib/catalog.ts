@@ -388,9 +388,9 @@ export const sauces: Sauce[] = [
     ],
     steps: [
       "Steep the saffron in 2 tbsp hot water for 5 minutes. Halve the tomatoes and cook in the oil for 5–6 minutes.",
-      "Mix ricotta with the saffron liquid and a little pasta water until smooth.",
+      "Mix ricotta, small mozzarella cubes, the saffron liquid and a little pasta water until combined.",
       "Remove the tomato pan from the heat, add pasta and the ricotta mixture, and toss.",
-      "Fold in small mozzarella cubes and finely torn mint just before serving.",
+      "Fold in finely torn mint just before serving.",
     ],
     pastaIds: ["orecchiette", "cavatelli", "trofie", "fusilli"],
   },
@@ -723,7 +723,7 @@ export const sauces: Sauce[] = [
     ],
     steps: [
       "Blend the tomatoes, almonds, basil, garlic and oil into a textured paste.",
-      "Loosen with warm pasta water, taste before salting, and toss with pasta off the heat.",
+      "Loosen with warm pasta water, taste before salting and toss with pasta off the heat.",
       "Add more pasta water if the coating is too thick.",
     ],
     pastaIds: ["fusilli", "penne", "trofie", "sedanini"],
@@ -888,7 +888,7 @@ export const sauces: Sauce[] = [
     steps: [
       "Cook speck strips in a dry pan for 2–3 minutes; set aside.",
       "Soften chopped onion in the oil for 4 minutes.",
-      "Add peas and 80 ml water; simmer for 6–8 minutes until tender. Mash or blend one-third of the peas.",
+      "Add peas and 80 ml water; simmer for 6–8 minutes until tender. Optionally, mash or blend one-third of the peas.",
       "Return everything to the pan, add pasta and speck, and loosen with pasta water.",
     ],
     pastaIds: ["garganelli", "sedanini", "orecchiette", "cavatelli"],
@@ -939,9 +939,9 @@ export const sauces: Sauce[] = [
     ],
     steps: [
       "Cook speck strips in a dry pan for 2–3 minutes; set aside.",
-      "Finely dice the carrot, onion and courgette, and slice the mushrooms.",
+      "Finely dice the carrot, onion and courgette and slice the mushrooms.",
       "Add oil, onion and carrot to the pan; cook for 5 minutes. Add mushrooms and cook for 6 minutes, then add courgette and cook for another 6–8 minutes.",
-      "Return the speck, add pasta and a little pasta water, and toss.",
+      "Return the speck, add pasta and a little pasta water and toss.",
     ],
     pastaIds: ["rigatoni", "fusilli", "sedanini", "cavatelli"],
   },
@@ -1256,14 +1256,21 @@ export function recipeIngredients(pasta: Pasta, sauce: Sauce): Ingredient[] {
   ]
 }
 export function recipeSteps(pasta: Pasta, sauce: Sauce): string[] {
+  if (sauce.id === "cime-di-rapa") {
+    return sauce.steps.map((step) =>
+      step.replace(
+        "Cook pasta in the reserved water",
+        `Cook the ${pasta.name} in the reserved water`
+      )
+    )
+  }
+
   const timing =
-    sauce.id === "cime-di-rapa"
-      ? "Cook the greens first as described below, then use their cooking water for the pasta."
-      : sauce.id === "meat-ragu"
-        ? "Prepare the ragù first and cook the pasta when the sauce is nearly ready."
-        : sauce.category === "Cold & fresh"
-          ? "Cook the pasta first and cool it as described below."
-          : "Prepare the sauce alongside the pasta, timing the pasta to finish when the sauce is ready."
+    sauce.id === "meat-ragu"
+      ? "Prepare the ragù first and cook the pasta when the sauce is nearly ready."
+      : sauce.category === "Cold & fresh"
+        ? "Cook the pasta first and cool it as described below."
+        : "Prepare the sauce alongside the pasta, timing the pasta to finish when the sauce is ready."
   return [
     `${timing} Cook the ${pasta.name} in salted boiling water following the package timing. Reserve a mug of pasta water before draining.`,
     ...sauce.steps,
