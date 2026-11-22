@@ -75,34 +75,6 @@ function navigate(screen: Screen, params: Record<string, string> = {}) {
   window.location.hash = screen + (query ? `?${query}` : "")
 }
 
-// The wireframe artwork is deliberately retained until the image direction is decided.
-function WireImage({
-  kind,
-  className,
-}: {
-  kind: "home" | "pasta" | "sauce" | "selection" | "dish" | "ingredient"
-  className?: string
-}) {
-  const dimensions = {
-    home: [350, 240],
-    pasta: [110, 110],
-    sauce: [76, 76],
-    selection: [157, 157],
-    dish: [299, 299],
-    ingredient: [53, 53],
-  }[kind]
-  // These small local SVGs are wireframe placeholders, not optimized photographs.
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={`/wireframe/${kind}.svg`}
-      alt=""
-      width={dimensions[0]}
-      height={dimensions[1]}
-      className={cn("object-contain dark:invert", className)}
-    />
-  )
-}
 function SauceTags({ sauce }: { sauce: Sauce }) {
   return (
     <div className="flex flex-wrap gap-1.5">
@@ -201,10 +173,8 @@ function PastaOption({
             showArtwork ? "overflow-visible" : "overflow-hidden"
           )}
         >
-          {previewArtwork && hasPastaArtwork(pasta.id) ? (
+          {previewArtwork && hasPastaArtwork(pasta.id) && (
             <PastaArtwork id={pasta.id} />
-          ) : (
-            <WireImage kind="pasta" className="max-w-full" />
           )}
           {selected && (
             <span className="absolute top-1 right-1 flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
@@ -414,9 +384,7 @@ function PairingScreen({
                 <PastaArtwork id={pasta.id} />
               ) : kind === "sauce" && sauce ? (
                 <SauceArtwork sauce={sauce} />
-              ) : (
-                <WireImage kind="selection" className="max-w-full" />
-              )}
+              ) : null}
             </motion.div>
             <div className="min-w-0 space-y-2">
               <p className="text-xs text-muted-foreground">Your {kind}</p>
@@ -615,9 +583,7 @@ function RecipeScreen({
                           sizes="53px"
                           className="size-[53px] object-contain"
                         />
-                      ) : (
-                        <WireImage kind="ingredient" />
-                      )}
+                      ) : null}
                       <span className="text-xs font-medium">{i.name}</span>
                       <span className="text-xs text-muted-foreground">
                         {i.quantity}
